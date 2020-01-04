@@ -4,6 +4,9 @@
 
 #include "hash_table.h"
 
+static const int HT_PRIME_1 = 151;
+static const int HT_PRIME_2 = 163;
+
 /**
  * @brief Create a new hash table item
  * 
@@ -86,13 +89,16 @@ int ht_hash(const char* s, const int a, const int m) {
   long hash = 0;
   const int len_s = strlen(s);
   for (int i = 0; i < len_s; i++) {
-<<<<<<< HEAD
-    hash += (long)pow((double)a, (double)(len_s - (i + 1))) * s[i];
-=======
-    hash += (long)pow((double)a, (double)len_s - (i + 1)) * s[i];
->>>>>>> f8fa99fcb126b4277051873bd2a5d4e69dbefb0e
+    hash += (long)pow(a, (len_s - (i + 1))) * s[i];
     // Make sure the hash value does not exceed m by taking the remainder
     hash = hash % m;
   }
   return (int)hash;
+}
+
+static int ht_get_hash(const char* s, const int num_buckets, const int attempt) {
+
+  const int hash_a = ht_hash(s, HT_PRIME_1, num_buckets);
+  const int hash_b = ht_hash(s, HT_PRIME_2, num_buckets);
+  return (hash_a + (attempt * (hash_b + 1))) % num_buckets;
 }
