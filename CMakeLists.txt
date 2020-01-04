@@ -10,3 +10,6 @@ add_executable(hash_table
   hash_table.c
   prime.h
   prime.c)
+
+# Need to link the cmath library (m)
+target_link_libraries(hash_table m)

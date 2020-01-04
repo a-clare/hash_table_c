@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "hash_table.h"
 
@@ -66,4 +67,28 @@ void ht_del_hash_table(ht_hash_table* ht) {
   }
   free(ht->items);
   free(ht);
+}
+
+/**
+ * @brief Hash function. Takes a string and hashes to an integer between
+ * 0 and m
+ * 
+ * Made the function non static to test/try it in main.c. 
+ * In the tutorial online its static but shouldnt make a big difference
+ * 
+ * @param s string to hash (key)
+ * @param a prime number larger than the size of the alphabet
+ * @param m max range of hash integer
+ * @return int 
+ */
+int ht_hash(const char* s, const int a, const int m) {
+
+  long hash = 0;
+  const int len_s = strlen(s);
+  for (int i = 0; i < len_s; i++) {
+    hash += (long)pow((double)a, (double)(len_s - (i + 1))) * s[i];
+    // Make sure the hash value does not exceed m by taking the remainder
+    hash = hash % m;
+  }
+  return (int)hash;
 }
