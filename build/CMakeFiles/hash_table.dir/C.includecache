@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/adam/projects/hash_table_c/hash_table.c
+stdlib.h
+-
+string.h
+-
+hash_table.h
+/home/adam/projects/hash_table_c/hash_table.h
+
+/home/adam/projects/hash_table_c/hash_table.h
+
+/home/adam/projects/hash_table_c/main.c
+hash_table.h
+/home/adam/projects/hash_table_c/hash_table.h
+
+/home/adam/projects/hash_table_c/prime.c
+prime.h
+/home/adam/projects/hash_table_c/prime.h
+
+/home/adam/projects/hash_table_c/prime.h
+
