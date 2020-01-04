@@ -86,7 +86,11 @@ int ht_hash(const char* s, const int a, const int m) {
   long hash = 0;
   const int len_s = strlen(s);
   for (int i = 0; i < len_s; i++) {
+<<<<<<< HEAD
     hash += (long)pow((double)a, (double)(len_s - (i + 1))) * s[i];
+=======
+    hash += (long)pow((double)a, (double)len_s - (i + 1)) * s[i];
+>>>>>>> f8fa99fcb126b4277051873bd2a5d4e69dbefb0e
     // Make sure the hash value does not exceed m by taking the remainder
     hash = hash % m;
   }
