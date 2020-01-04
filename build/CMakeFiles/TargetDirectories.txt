@@ -1,3 +1,0 @@
-/home/adam/projects/hash_table_c/build/CMakeFiles/rebuild_cache.dir
-/home/adam/projects/hash_table_c/build/CMakeFiles/hash_table.dir
-/home/adam/projects/hash_table_c/build/CMakeFiles/edit_cache.dir
