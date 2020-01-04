@@ -27,5 +27,5 @@ typedef struct {
 
 ht_hash_table* ht_new();
 void ht_del_hash_table(ht_hash_table* ht);
-
+int ht_hash(const char* s, const int a, const int m);
 #endif
