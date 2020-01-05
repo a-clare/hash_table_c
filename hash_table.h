@@ -20,6 +20,9 @@ typedef struct {
  * 
  */
 typedef struct {
+  /* This variable is not shown/used in the tutorials 01-05 however
+    is needed on 06-resizing. It is not described to be added in the tutorial */
+  int size_index;
   int size;
   int count;
   ht_item** items;

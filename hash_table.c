@@ -4,11 +4,80 @@
 #include <stdio.h>
 
 #include "hash_table.h"
+#include "prime.h"
 
 static const int HT_PRIME_1 = 151;
 static const int HT_PRIME_2 = 163;
+/* Variable for initial size of the hash table. Not defined or outlined in the 
+  tutorials so made the initial size to 50 */
+static const int HT_INITIAL_BASE_SIZE = 50;
 
 static ht_item HT_DELETED_ITEM = {NULL, NULL};
+
+static ht_hash_table* ht_new_sized(const int hashSize) {
+
+  ht_hash_table* ht = malloc(sizeof(ht_hash_table));
+  ht->size_index = hashSize;
+  ht->size = next_prime(ht->size_index);
+  ht->count = 0;
+  ht->items = calloc((size_t)ht->size, sizeof(ht_item*));
+  return ht;
+}
+
+/**
+ * @brief Resize a hashtable
+ * 
+ * @param ht 
+ * @param baseSize 
+ */
+static void ht_resize(ht_hash_table* ht, const int baseSize) {
+
+  /* Dont allow hash table smaller than the base size */
+  if (baseSize < HT_INITIAL_BASE_SIZE) {
+    return;
+  }
+  ht_hash_table* new_ht = ht_new_sized(baseSize);
+  /* Need to copy over the elements in the old hash table to the new one */
+  for (int i = 0; i < ht->size; i++) {
+    ht_item* item = ht->items[i];
+    if (item != NULL && item != &HT_DELETED_ITEM) {
+      ht_insert(new_ht, item->key, item->value);
+    }
+  }
+  ht->size_index = new_ht->size_index;
+  ht->count = new_ht->count;
+
+  /* Swap the size, need to do this to delete new_ht */
+  const int tmp_size = ht->size;
+  ht->size = new_ht->size;
+  new_ht->size = tmp_size;
+
+  ht_item** tmp_items = ht->items;
+  ht->items = new_ht->items;
+  new_ht->items = tmp_items;
+
+  ht_del_hash_table(new_ht);
+}
+
+/**
+ * @brief Increase the size of the hashtable
+ * 
+ * @param ht 
+ */
+static void ht_resize_up(ht_hash_table* ht) {
+  const int new_size = ht->size_index * 2;
+  ht_resize(ht, new_size);
+}
+
+/**
+ * @brief Decrease the size of a hashtable
+ * 
+ * @param ht 
+ */
+static void ht_resize_down(ht_hash_table* ht) {
+  const int new_size = ht->size_index / 2;
+  ht_resize(ht, new_size);
+}
 
 /**
  * @brief Create a new hash table item
@@ -38,6 +107,13 @@ static ht_item* ht_new_item(const char* k, const char* v) {
  * @return ht_hash_table* 
  */
 ht_hash_table* ht_new() {
+
+  return ht_new_sized(HT_INITIAL_BASE_SIZE);
+  
+  /* !!!!!! 
+      The code below is part of tutorials 01-05. Once we add dynamic resizing
+      we use the above code
+     !!!!!! */
 
   /* Allocate memory for a new hash table */
   ht_hash_table* ht = malloc(sizeof(ht_hash_table));
@@ -119,6 +195,13 @@ static int ht_hash(const char* s, const int num_buckets, const int attempt) {
  */
 void ht_insert(ht_hash_table* ht, const char* key, const char* value) {
 
+  /* Part of tutorial06-resizing. If the hashtable is 70 percent full
+      increase the size of it */
+  const int load = ht->count * 100 / ht->size;
+  if (load > 70) {
+    ht_resize_up(ht);
+  }
+
   /* Create the new hash table item */
   printf("Creating new item with key '%s' and value '%s'\n", key, value);
   ht_item* item = ht_new_item(key, value);
@@ -189,6 +272,13 @@ char* ht_search(ht_hash_table* ht, const char* key) {
  * @param key 
  */
 void ht_delete(ht_hash_table* ht, const char* key) {
+
+  /* Part of tutorial 06-resizing. If the hashtable is under 10 percent full
+      decrease the size of it. */
+  const int load = ht->count * 100 / ht->size;
+  if (load < 10) {
+    ht_resize_down(ht);
+  }
 
   /* Calculate the hash */
   int index = ht_hash(key, ht->size, 0);
